@@ -11,3 +11,7 @@
 - fd
 - hexyl
 - p10k
+
+# Burpsuite Extensions
+
+- json web tokens
