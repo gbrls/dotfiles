@@ -1,0 +1,47 @@
+[note]
+filename = "{{title}}"
+
+[group.yearly]
+paths = ["03 archive/yearly-notes"]
+
+[group.yearly.note]
+filename = "{{format-date now '%Y'}}"
+
+[group.monthly]
+paths = ["03 archive/monthly-notes"]
+
+[group.monthly.note]
+filename = "{{format-date now '%Y-%m'}}"
+
+[group.weekly]
+paths = ["03 archive/weekly-notes"]
+
+[group.weekly.note]
+filename = "{{format-date now '%Y-%V'}}"
+
+[group.daily]
+paths = ["03 archive/daily-notes"]
+
+[group.daily.note]
+filename = "{{format-date now '%Y-%m-%d'}}"
+
+[group.journal]
+paths = ["01 areas/journal"]
+
+[group.journal.note]
+filename = "{{format-date now '%Y-%m-%d'}}"
+
+[alias]
+journal = "zk new '01 areas/journal'"
+today = "zk new '03 archive/daily-notes'"
+week = "zk new '03 archive/weekly-notes'"
+month = "zk new '03 archive/monthly-notes'"
+year = "zk new '03 archive/yearly-notes'"
+open = "zk edit --interactive"
+
+blog = "zk new '01 areas/blog' -t $@"
+
+[tool]
+#fzf-preview = "bat -p --color always {-1}"
+fzf-preview = "glow {-1}"
+
