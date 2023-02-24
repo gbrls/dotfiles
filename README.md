@@ -2,7 +2,9 @@
 
 - neovim
 - tmux
+- zk
 - rust
+- elixir
 - fzf
 - ripgrep
 - exa
