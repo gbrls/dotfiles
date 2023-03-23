@@ -20,6 +20,7 @@ require('lazy').setup({
     'tpope/vim-rhubarb',
     'tpope/vim-surround',
     'tpope/vim-repeat',
+    'ggandor/leap.nvim',
 
     'akinsho/toggleterm.nvim',
     -- Tabstop
@@ -72,7 +73,7 @@ require('lazy').setup({
         'rose-pine/neovim',
         name = 'rose-pine',
     },
-    --'lukas-reineke/indent-blankline.nvim',
+    'lukas-reineke/indent-blankline.nvim',
     -- "gc" to comment visual regions/lines
     --{ 'numToStr/Comment.nvim',         opts = {} },
 
@@ -82,6 +83,7 @@ require('lazy').setup({
     -- Fuzzy Finder Algorithm which requires local dependencies to be built.
     -- Only load if `make` is available. Make sure you have the system
     -- requirements installed.
+
     {
         'nvim-telescope/telescope-fzf-native.nvim',
         -- NOTE: If you are having trouble with this installation,
@@ -92,6 +94,7 @@ require('lazy').setup({
         end,
     },
 
+    'nvim-treesitter/nvim-treesitter-context',
     { -- Highlight, edit, and navigate code
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
@@ -137,7 +140,6 @@ vim.o.termguicolors = true
 --Do not save when switching buffers
 vim.o.hidden = true
 
---vim.g.indent_blankline_char = "^"
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -219,6 +221,11 @@ require('rose-pine').setup({
     --- @usage 'main' | 'moon'
     dark_variant = 'moon',
     disable_italics = true,
+    highlight_groups = {
+        IndentBlanklineChar = { fg = 'overlay', bg = 'base' },
+        LineNrAbove = { fg = 'overlay', bg = 'base' },
+        LineNrBelow = { fg = 'overlay', bg = 'base' },
+    }
 })
 vim.cmd('colorscheme rose-pine')
 
@@ -298,8 +305,12 @@ lmap('<leader>fs', require('telescope.builtin').live_grep, 'file search')
 lmap('<leader>ft', require('telescope.builtin').lsp_document_symbols, 'file tags')
 lmap('<leader><leader>', require('telescope.builtin').commands, 'all commands')
 lmap('<leader>b', require('telescope.builtin').buffers, 'buffers')
+lmap('<leader>q', require('telescope.builtin').quickfix, 'quickfix')
+lmap('<leader>h', require('telescope.builtin').quickfixhistory, 'quickfix history')
+lmap('<leader>j', require('telescope.builtin').jumplist, 'jumplist')
 lmap('<leader>la', vim.lsp.buf.code_action, 'lsp action')
 lmap('<leader>lf', vim.lsp.buf.format, 'lsp format')
+lmap('<leader>lr', vim.lsp.buf.rename, 'lsp rename')
 lmap('<leader>ot', function() return require('toggleterm').toggle(0) end, 'open term')
 
 vim.keymap.set('v', '<leader>e',
@@ -344,6 +355,16 @@ local luasnip = require 'luasnip'
 
 luasnip.config.setup {}
 
+--vim.g.indent_blankline_char = "^"
+require('indent_blankline').setup {
+    show_current_context = false,
+}
+
+
+require('treesitter-context').setup {
+    mode = 'topline'
+}
+
 cmp.setup {
     snippet = {
         expand = function(args)
@@ -383,3 +404,5 @@ cmp.setup {
         { name = 'path' },
     },
 }
+
+require('leap').add_default_mappings()
