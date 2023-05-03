@@ -1,0 +1,44 @@
+format = """
+$directory $time\
+$git_branch\
+$git_status\
+$character\n"""
+
+right_format = """
+$cmd_duration\
+$localip\
+"""
+
+add_newline = false
+
+[time]
+disabled = false
+
+format = '[$time]($style) '
+style = "bold fg:#ebbcba"
+
+time_format = "%Y-%m-%d %H:%M"
+
+[directory]
+truncation_length = 3
+truncate_to_repo = false
+truncation_symbol = ""
+
+format = "[$path]($style)"
+style = "bold fg:#eb6f92"
+
+[git_branch]
+symbol = ""
+style = "fg:#908caa"
+format = "[$symbol $branch ]($style)"
+
+[localip]
+ssh_only = false
+style = "fg:#908caa"
+format = '[$localipv4]($style)'
+disabled = false
+
+[cmd_duration]
+show_notifications = false
+format = "[$duration]($style) "
+style = "fg:#f6c177"
