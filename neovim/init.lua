@@ -227,6 +227,7 @@ require('rose-pine').setup({
         LineNrBelow = { fg = 'overlay', bg = 'base' },
     }
 })
+vim.o.background = 'light'
 vim.cmd('colorscheme rose-pine')
 
 
