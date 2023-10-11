@@ -37,7 +37,7 @@ require('lazy').setup({
 
             -- Useful status updates for LSP
             -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-            { 'j-hui/fidget.nvim', opts = {} },
+            { 'j-hui/fidget.nvim', opts = {}, tag = 'legacy' },
 
             -- Additional lua configuration, makes nvim stuff amazing!
             'folke/neodev.nvim',
@@ -157,6 +157,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 require('nvim-treesitter.configs').setup {
     ensure_installed = { 'elixir', 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
     auto_install = false,
+    ignore_install = { 'help' },
 
     highlight = { enable = true },
     indent = { enable = true, disable = { 'python' } },
@@ -227,7 +228,7 @@ require('rose-pine').setup({
         LineNrBelow = { fg = 'overlay', bg = 'base' },
     }
 })
-vim.o.background = 'light'
+--vim.o.background = 'light'
 vim.cmd('colorscheme rose-pine')
 
 
@@ -356,9 +357,10 @@ local luasnip = require 'luasnip'
 
 luasnip.config.setup {}
 
+-- those configuration settings have been deprecated
 --vim.g.indent_blankline_char = "^"
-require('indent_blankline').setup {
-    show_current_context = false,
+require('ibl').setup {
+    --show_current_context = false,
 }
 
 
@@ -373,7 +375,7 @@ cmp.setup {
         end,
     },
     mapping = cmp.mapping.preset.insert {
-        ['<C-d>'] = cmp.mapping.scroll_docs( -4),
+        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
         ['<C-f>'] = cmp.mapping.scroll_docs(4),
         ['<C-Space>'] = cmp.mapping.complete {},
         ['<CR>'] = cmp.mapping.confirm {
@@ -392,8 +394,8 @@ cmp.setup {
         ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
                 cmp.select_prev_item()
-            elseif luasnip.jumpable( -1) then
-                luasnip.jump( -1)
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
             else
                 fallback()
             end
