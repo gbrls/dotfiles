@@ -37,7 +37,7 @@ require('lazy').setup({
 
             -- Useful status updates for LSP
             -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-            { 'j-hui/fidget.nvim', opts = {}, tag = 'legacy' },
+            { 'j-hui/fidget.nvim', opts = {} },
 
             -- Additional lua configuration, makes nvim stuff amazing!
             'folke/neodev.nvim',
@@ -62,6 +62,7 @@ require('lazy').setup({
             })
         end,
     },
+    -- small rice
     'lewis6991/gitsigns.nvim',
     {
         'nvim-lualine/lualine.nvim',
@@ -73,9 +74,8 @@ require('lazy').setup({
         'rose-pine/neovim',
         name = 'rose-pine',
     },
+    -- small rice
     'lukas-reineke/indent-blankline.nvim',
-    -- "gc" to comment visual regions/lines
-    --{ 'numToStr/Comment.nvim',         opts = {} },
 
     -- Fuzzy Finder (files, lsp, etc)
     { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
@@ -104,6 +104,25 @@ require('lazy').setup({
             pcall(require('nvim-treesitter.install').update { with_sync = true })
         end,
     },
+
+    -- Lots of rice here
+    'rcarriga/nvim-notify',
+    {
+        "folke/noice.nvim",
+        event = "VeryLazy",
+        opts = {
+            -- add any options here
+        },
+        dependencies = {
+            -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+            "MunifTanjim/nui.nvim",
+            -- OPTIONAL:
+            --   `nvim-notify` is only needed, if you want to use the notification view.
+            --   If not available, we use `mini` as the fallback
+            "rcarriga/nvim-notify",
+        }
+    }
+
 }, {})
 
 vim.o.scrolloff = 3
@@ -140,6 +159,8 @@ vim.o.termguicolors = true
 --Do not save when switching buffers
 vim.o.hidden = true
 
+-- cool notify window
+vim.notify = require("notify")
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -157,7 +178,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 require('nvim-treesitter.configs').setup {
     ensure_installed = { 'elixir', 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
     auto_install = false,
-    ignore_install = { 'help' },
 
     highlight = { enable = true },
     indent = { enable = true, disable = { 'python' } },
@@ -220,7 +240,7 @@ pcall(require('telescope').load_extension, 'fzf')
 
 require('rose-pine').setup({
     --- @usage 'main' | 'moon'
-    dark_variant = 'moon',
+    dark_variant = 'main',
     disable_italics = true,
     highlight_groups = {
         IndentBlanklineChar = { fg = 'overlay', bg = 'base' },
@@ -228,7 +248,7 @@ require('rose-pine').setup({
         LineNrBelow = { fg = 'overlay', bg = 'base' },
     }
 })
---vim.o.background = 'light'
+vim.o.background = 'dark'
 vim.cmd('colorscheme rose-pine')
 
 
@@ -304,7 +324,7 @@ end
 lmap('<leader>ff', require('telescope.builtin').find_files, 'file find')
 lmap('<leader>fh', require('telescope.builtin').oldfiles, 'file history')
 lmap('<leader>fs', require('telescope.builtin').live_grep, 'file search')
-lmap('<leader>ft', require('telescope.builtin').lsp_document_symbols, 'file tags')
+lmap('<leader>ft', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'file tags')
 lmap('<leader><leader>', require('telescope.builtin').commands, 'all commands')
 lmap('<leader>b', require('telescope.builtin').buffers, 'buffers')
 lmap('<leader>q', require('telescope.builtin').quickfix, 'quickfix')
@@ -335,12 +355,18 @@ mason_lspconfig.setup {
     ensure_installed = vim.tbl_keys(servers),
 }
 
+local lsp_handlers =  {
+  ["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = 'rounded'}),
+  ["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.signature_help, {border = 'rounded' }),
+}
+
 mason_lspconfig.setup_handlers {
     function(server_name)
         require('lspconfig')[server_name].setup {
             capabilities = capabilities,
             on_attach = on_attach,
             settings = servers[server_name],
+            -- handlers = lsp_handlers,
         }
     end,
 }
@@ -357,10 +383,9 @@ local luasnip = require 'luasnip'
 
 luasnip.config.setup {}
 
--- those configuration settings have been deprecated
 --vim.g.indent_blankline_char = "^"
-require('ibl').setup {
-    --show_current_context = false,
+require('indent_blankline').setup {
+    show_current_context = false,
 }
 
 
@@ -409,3 +434,21 @@ cmp.setup {
 }
 
 require('leap').add_default_mappings()
+require("noice").setup({
+    lsp = {
+        -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+        override = {
+            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+            ["vim.lsp.util.stylize_markdown"] = true,
+            ["cmp.entry.get_documentation"] = true,
+        },
+    },
+    -- you can enable a preset for easier configuration
+    presets = {
+        bottom_search = true,     -- use a classic bottom cmdline for search
+        command_palette = true,   -- position the cmdline and popupmenu together
+        long_message_to_split = false, -- long messages will be sent to a split
+        inc_rename = false,       -- enables an input dialog for inc-rename.nvim
+        lsp_doc_border = false,   -- add a border to hover docs and signature help
+    },
+})
